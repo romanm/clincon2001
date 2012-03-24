@@ -3,6 +3,9 @@ package org.clincon2001.web;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.clincon2001.domain.Ccdiagnosis;
 import org.clincon2001.domain.Diagnosis;
 import org.springframework.roo.addon.web.mvc.controller.scaffold.RooWebScaffold;
@@ -45,8 +48,10 @@ public class DiagnosisController {
         return "diagnoses/show";
     }
 
+	private final Log logger = LogFactory.getLog(getClass());
 	@RequestMapping(produces = "text/html")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+		logger.info("-------BEGIN---------------");
         if (page != null || size != null) {
             int sizeNo = size == null ? 10 : size.intValue();
             final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
