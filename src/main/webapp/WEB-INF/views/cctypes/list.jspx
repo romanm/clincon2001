@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_org_clincon2001_domain_Cctype" items="${cctypes}" z="pVy+OM9igaZAzYsFNpDgJUM0/pE=">
+        <table:table data="${cctypes}" id="l_org_clincon2001_domain_Cctype" path="/cctypes" z="O0SRryVGZKGzD5nS1D4Z0Q9QUIQ=">
+            <table:column id="c_org_clincon2001_domain_Cctype_name" property="name" z="ugROQqCmpBDjW0W3McP12OWuk0o="/>
+        </table:table>
+    </page:list>
+</div>

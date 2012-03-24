@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_org_clincon2001_domain_Clincon" modelAttribute="clincon" path="/clincons" render="${empty dependencies}" z="o4mnKOixlLHB4spBrXjEXF5htxo=">
+        <field:simple field="ccdiagnoses" id="c_org_clincon2001_domain_Clincon_ccdiagnoses" messageCode="entity_reference_not_managed" messageCodeAttribute="Ccdiagnosis" z="mfJpChmDhJpIMkzQ6CulRjneEz4="/>
+        <field:simple field="participants" id="c_org_clincon2001_domain_Clincon_participants" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="o2k8tL1QmAjefAH+S63YSk5DFps="/>
+        <field:select field="ccdate" id="c_org_clincon2001_domain_Clincon_ccdate" itemValue="id" items="${ccdates}" path="/ccdates" z="7kyRF1O2j6VQv8QGnUCNbKRcBew="/>
+        <field:select field="patient" id="c_org_clincon2001_domain_Clincon_patient" itemValue="id" items="${patients}" path="/patients" z="6YbvFAOjvHwFUkoJMwN9WDr7WiA="/>
+        <field:input field="anamnesis" id="c_org_clincon2001_domain_Clincon_anamnesis" z="ahy3aMR5OoiKtH+qJ/i9TheBB+o="/>
+        <field:input field="suggestion" id="c_org_clincon2001_domain_Clincon_suggestion" z="qcVVLar6Px8ZhmeVpMyLEk/+hN8="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_org_clincon2001_domain_Clincon" render="${not empty dependencies}" z="i98C8R9rcMdmYX2SRrC4n1/4GLM="/>
+</div>

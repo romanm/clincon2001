@@ -1,0 +1,22 @@
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log opened at 2012-03-20 14:54:17
+project --topLevelPackage org.clincon2001 --projectName clincon2001 --java 6 --packaging WAR
+jpa setup --provider HIBERNATE --database POSTGRES 
+database properties set --key database.username --value ows_edit
+database properties set --key database.password --value ows123
+database properties set --key database.url --value jdbc:postgresql://localhost:5432/clincon2
+addon install id --searchResultId 01
+database introspect --schema public --file dbintrospect.xml --enableViews true
+database reverse engineer --schema public --package ~.domain --enableViews true
+web mvc setup
+web mvc all --package ~.web
+quit
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log closed at 2012-03-20 14:54:44
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log opened at 2012-03-20 14:54:44
+// script --file myRoo.roo
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log closed at 2012-03-20 14:54:44
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log opened at 2012-03-20 15:03:20
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log closed at 2012-03-20 15:17:53
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log opened at 2012-03-22 13:50:02
+web flow 
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log opened at 2012-03-22 17:50:05
+// Spring Roo 1.2.1.RELEASE [rev 6eae723] log opened at 2012-03-22 17:58:40

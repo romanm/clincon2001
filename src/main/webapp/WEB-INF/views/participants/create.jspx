@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:c="http://java.sun.com/jsp/jstl/core" xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:spring="http://www.springframework.org/tags" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:create id="fc_org_clincon2001_domain_Participant" modelAttribute="participant" path="/participants" render="${empty dependencies}" z="PeBdJAgmIAAvZUvOvYhrfIJMqdQ=">
+        <field:select field="clincon" id="c_org_clincon2001_domain_Participant_clincon" itemValue="id" items="${clincons}" path="/clincons" z="oy2Hi0WgtFXH9z3BBW+usDA8NJE="/>
+        <field:select field="doctor01" id="c_org_clincon2001_domain_Participant_doctor01" itemValue="id" items="${doctors}" path="/doctors" z="qreAJa/Py/tW9IM8SX5rST5OrJM="/>
+        <field:select field="doctor02" id="c_org_clincon2001_domain_Participant_doctor02" itemValue="id" items="${doctors}" path="/doctors" z="q07nrTGcZU5tBPgzE2B9AGMMxL0="/>
+        <field:select field="doctor03" id="c_org_clincon2001_domain_Participant_doctor03" itemValue="id" items="${doctors}" path="/doctors" z="BsHjVpKq0uaZeZygYQfcbkNIAdk="/>
+        <field:select field="doctor04" id="c_org_clincon2001_domain_Participant_doctor04" itemValue="id" items="${doctors}" path="/doctors" z="ec2IQAs1tILL2dp9I9L7m8soXYU="/>
+        <field:select field="doctor05" id="c_org_clincon2001_domain_Participant_doctor05" itemValue="id" items="${doctors}" path="/doctors" z="Y2jgR0KFMh9//Ga38wx+unZ41hg="/>
+        <field:select field="doctor06" id="c_org_clincon2001_domain_Participant_doctor06" itemValue="id" items="${doctors}" path="/doctors" z="eJTFRCdjy9CZ7Wb65SfbX/9PJJ8="/>
+        <field:select field="doctor07" id="c_org_clincon2001_domain_Participant_doctor07" itemValue="id" items="${doctors}" path="/doctors" z="f7WbAls2hmlfT1gbJ5K9zNdnVy8="/>
+        <field:select field="doctor08" id="c_org_clincon2001_domain_Participant_doctor08" itemValue="id" items="${doctors}" path="/doctors" z="alZS05aBrlHfTR7RUxaiAaqoZ8w="/>
+        <field:select field="doctor09" id="c_org_clincon2001_domain_Participant_doctor09" itemValue="id" items="${doctors}" path="/doctors" z="9aqcHRoXruCwo0jfiEm2lMWzACo="/>
+        <field:select field="doctor10" id="c_org_clincon2001_domain_Participant_doctor10" itemValue="id" items="${doctors}" path="/doctors" z="p/nexFLlDTHEoOTl+6XPK6q04yw="/>
+    </form:create>
+    <form:dependency dependencies="${dependencies}" id="d_org_clincon2001_domain_Participant" render="${not empty dependencies}" z="KQvgSwU2usGnEuQmBiL0pZuPIJw="/>
+</div>

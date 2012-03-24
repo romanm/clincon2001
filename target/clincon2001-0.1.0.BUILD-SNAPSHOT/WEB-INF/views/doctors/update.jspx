@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <form:update id="fu_org_clincon2001_domain_Doctor" modelAttribute="doctor" path="/doctors" versionField="none" z="ofQI/3Ld0znSrgPCTY9yVkOSsdQ=">
+        <field:simple field="participants" id="c_org_clincon2001_domain_Doctor_participants" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="Nnclt84kc1YkdI5RT5MPcVxpOmE="/>
+        <field:simple field="participants1" id="c_org_clincon2001_domain_Doctor_participants1" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="CM6SS044egKa+Xwey+nsD7ONt6A="/>
+        <field:simple field="participants2" id="c_org_clincon2001_domain_Doctor_participants2" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="4uStNK4m+HWYMQ0JC53r7L/j+dE="/>
+        <field:simple field="participants3" id="c_org_clincon2001_domain_Doctor_participants3" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="ZgYiTq9zgXkKvsngGygu1S2TUsM="/>
+        <field:simple field="participants4" id="c_org_clincon2001_domain_Doctor_participants4" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="oKCd1KtO4uwiqtQY8/202wB6Nsg="/>
+        <field:simple field="participants5" id="c_org_clincon2001_domain_Doctor_participants5" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="BHTCmQZ2JGi8mLd/APnVt/0Xy/4="/>
+        <field:simple field="participants6" id="c_org_clincon2001_domain_Doctor_participants6" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="AHEUamYRMZchgq/KWcgadC3j5bo="/>
+        <field:simple field="participants7" id="c_org_clincon2001_domain_Doctor_participants7" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="jRerbbVqsq2QtMGUTU7yQzNLNA0="/>
+        <field:simple field="participants8" id="c_org_clincon2001_domain_Doctor_participants8" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="XnNWT9k0PCXqneQesZ7KpXT4Oj0="/>
+        <field:simple field="participants9" id="c_org_clincon2001_domain_Doctor_participants9" messageCode="entity_reference_not_managed" messageCodeAttribute="Participant" z="bYtE9wodrKhF6ZY1WSIfoumV6qc="/>
+        <field:input field="dfamilyname" id="c_org_clincon2001_domain_Doctor_dfamilyname" required="true" z="oyBSa0bhOF6HVt1EyDMg0HcJDDU="/>
+        <field:input field="dgivenname" id="c_org_clincon2001_domain_Doctor_dgivenname" required="true" z="fhHvRsCamBO2VuKipY8y0gCmP7Y="/>
+        <field:input field="dtitle" id="c_org_clincon2001_domain_Doctor_dtitle" z="2nKGk+xpyTwPaCPOMZIWaPlzqKQ="/>
+    </form:update>
+</div>

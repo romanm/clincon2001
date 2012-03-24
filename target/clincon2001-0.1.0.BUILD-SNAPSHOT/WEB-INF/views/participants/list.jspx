@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" xmlns:table="urn:jsptagdir:/WEB-INF/tags/form/fields" version="2.0">
+    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
+    <jsp:output omit-xml-declaration="yes"/>
+    <page:list id="pl_org_clincon2001_domain_Participant" items="${participants}" z="taRQoSyzzaNW90rfxwz+6NLK8s0=">
+        <table:table data="${participants}" id="l_org_clincon2001_domain_Participant" path="/participants" z="UmYyHSelkLNdR+X0BCL6qUJPC38=">
+            <table:column id="c_org_clincon2001_domain_Participant_clincon" property="clincon" z="wBKPn/vGez4nVVdJfov7zIV69Bo="/>
+            <table:column id="c_org_clincon2001_domain_Participant_doctor01" property="doctor01" z="uBg9lbMuidEN6CKnanWzI7083Pc="/>
+            <table:column id="c_org_clincon2001_domain_Participant_doctor02" property="doctor02" z="D1BQWHltLReVglD+OfLxzcEARIc="/>
+            <table:column id="c_org_clincon2001_domain_Participant_doctor03" property="doctor03" z="2+mtTAqtUvwcHuvljGcszNWQc/w="/>
+            <table:column id="c_org_clincon2001_domain_Participant_doctor04" property="doctor04" z="BcDhpSXpfIZj6f9fHF+v25ObWpc="/>
+            <table:column id="c_org_clincon2001_domain_Participant_doctor05" property="doctor05" z="nh8jlyegbCrTlZeSsNw9ijerQYg="/>
+        </table:table>
+    </page:list>
+</div>
