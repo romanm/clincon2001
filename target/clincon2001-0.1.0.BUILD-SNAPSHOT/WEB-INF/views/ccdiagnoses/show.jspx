@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:jsp="http://java.sun.com/JSP/Page" xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
-    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
-    <jsp:output omit-xml-declaration="yes"/>
-    <page:show id="ps_org_clincon2001_domain_Ccdiagnosis" object="${ccdiagnosis}" path="/ccdiagnoses" z="phJiy7abm/QGc4xjFjS5NFqgkwE=">
-        <field:display field="clincon" id="s_org_clincon2001_domain_Ccdiagnosis_clincon" object="${ccdiagnosis}" z="RDhBbKCXKIg0hZFGMnQOt65p2jY="/>
-        <field:display field="diagnosis" id="s_org_clincon2001_domain_Ccdiagnosis_diagnosis" object="${ccdiagnosis}" z="O6ecdPSxY0tvE21d7GtXn3wMEik="/>
-    </page:show>
-</div>

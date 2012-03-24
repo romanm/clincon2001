@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields" xmlns:form="urn:jsptagdir:/WEB-INF/tags/form" xmlns:jsp="http://java.sun.com/JSP/Page" version="2.0">
-    <jsp:directive.page contentType="text/html;charset=UTF-8"/>
-    <jsp:output omit-xml-declaration="yes"/>
-    <form:update id="fu_org_clincon2001_domain_Cctype" modelAttribute="cctype" path="/cctypes" versionField="none" z="HNFEFZbSW6dAoQo/xhRnqaMhAt0=">
-        <field:simple field="ccdates" id="c_org_clincon2001_domain_Cctype_ccdates" messageCode="entity_reference_not_managed" messageCodeAttribute="Ccdate" z="otKElnozZ7HwbTOEn8aNb5pp4DE="/>
-        <field:input field="name" id="c_org_clincon2001_domain_Cctype_name" z="CNsiZEMu/SOTiw21LIpUTV9liKo="/>
-    </form:update>
-</div>
