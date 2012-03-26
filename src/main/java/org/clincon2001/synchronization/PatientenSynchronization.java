@@ -1,5 +1,6 @@
 package org.clincon2001.synchronization;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,8 @@ public class PatientenSynchronization {
 
 	public void updatePatienten() {
 		logger.debug("-------BEGIN-------");
+		Map stM=new HashMap();
+		copyPatientenHistory2tmp(stM);
 		logger.debug("-------END-------");
 	}
 	

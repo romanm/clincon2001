@@ -14,5 +14,10 @@
 		<p>
 			<spring:message code="welcome_text" />
 		</p>
+		<p>
+			<a href="pasy">
+				patient sinchronisation
+			</a>
+		</p>
 	</util:panel>
 </div>
