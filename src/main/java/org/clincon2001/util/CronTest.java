@@ -10,9 +10,8 @@ public class CronTest {
 	private String test;
 
 	public String checkTest() {
-		logger.info("Hallo cron job info.");
 		String string = "This it - "+getTest()+" :: "+Calendar.getInstance().getTime();
-		System.out.println(string);
+		logger.info(string);
 		return string;
 	}
 	public String getTest() {
