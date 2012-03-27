@@ -1,11 +1,15 @@
 package org.clincon2001.synchronization;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.clincon2001.domain.Patient;
+import org.clincon2001.domain.Patientows1stgeorg;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -20,9 +24,40 @@ public class PatientenSynchronization {
 	public void updatePatienten() {
 		logger.debug("-------BEGIN-------");
 		Map stM=new HashMap();
+//		addPatient(stM);
 		copyPatienten2tmp(stM);
+		copyTmp2patienten(stM);
 //		copyPatientenHistory2tmp(stM);
 		logger.debug("-------END-------");
+	}
+	private void copyTmp2patienten(Map stM) {
+		logger.debug("-------BEGIN-------");
+		String targetPatienten=" SELECT patient, forename, sex, birthdate, idpatient FROM tmp.patient ";
+		List<Map<String, Object>> tmpPatientenList = simpleJdbc.queryForList(targetPatienten);
+		for (Map patientMap : tmpPatientenList) {
+			String patient=(String) patientMap.get("patient");
+			String forename=(String) patientMap.get("forename");
+			String sex=(String) patientMap.get("sex");
+			Date birthDate=(Date) patientMap.get("birthdate");
+			Integer idpatient=(Integer) patientMap.get("idpatient");
+			
+			Patient patientO = new Patient(forename,patient,sex,birthDate);
+			patientO.persist();
+			Patientows1stgeorg patientows1stgeorg = new Patientows1stgeorg();
+			patientows1stgeorg.setPatient(patientO);
+			patientows1stgeorg.setOws1stgeorg(idpatient.longValue());
+			patientows1stgeorg.persist();
+			
+		}
+		logger.debug("-------END-------");
+	}
+	private void addPatient(Map stM) {
+		Calendar birthDateCalendar = Calendar.getInstance();
+		birthDateCalendar.set(Calendar.YEAR, 1939);
+		Patient patient = new Patient("Dun","Bunn","M",birthDateCalendar.getTime());
+		logger.debug(patient);
+		patient.persist();
+		logger.debug(patient);
 	}
 	int idFolder=1048962;
 	private void copyPatienten2tmp(Map stM) {

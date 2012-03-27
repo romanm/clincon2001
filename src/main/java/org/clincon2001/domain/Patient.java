@@ -3,6 +3,8 @@ package org.clincon2001.domain;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -34,6 +36,14 @@ import org.springframework.transaction.annotation.Transactional;
 @RooJpaActiveRecord(table = "patient", schema = "public")
 @RooDbManaged(automaticallyDelete = true)
 public class Patient {
+
+	public Patient() {}
+	public Patient(String givenname, String familyname, String sex, Date birthDate) {
+		this.givenname=givenname;
+		this.familyname=familyname;
+		this.sex=sex;
+		this.birthDate=birthDate;
+	}
 
 	public String toString() {
         return ReflectionToStringBuilder.toString(this, ToStringStyle.SHORT_PREFIX_STYLE);
@@ -186,4 +196,13 @@ public class Patient {
         this.entityManager.flush();
         return merged;
     }
+	public Set<Patientows1stgeorg> getPatientows1stgeorgs() {
+        return patientows1stgeorgs;
+    }
+
+	public void setPatientows1stgeorgs(Set<Patientows1stgeorg> patientows1stgeorgs) {
+        this.patientows1stgeorgs = patientows1stgeorgs;
+    }
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
+    private Set<Patientows1stgeorg> patientows1stgeorgs;
 }
