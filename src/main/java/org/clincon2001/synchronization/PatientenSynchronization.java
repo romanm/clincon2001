@@ -26,14 +26,18 @@ public class PatientenSynchronization {
 		Map stM=new HashMap();
 //		addPatient(stM);
 		copyPatienten2tmp(stM);
-		copyTmp2patienten(stM);
+//		String sourcePatienten=" SELECT patient, forename, sex, birthdate, idpatient FROM tmp.patient ";
+		String sourcePatienten=" SELECT tp.patient, forename, sex, birthdate, idpatient " +
+				" FROM tmp.patient AS tp LEFT JOIN patientows1stgeorg  ON tp.idpatient=ows1stgeorg " +
+				" WHERE ows1stgeorg IS NULL";
+		copyTmp2patienten(stM,sourcePatienten);
 //		copyPatientenHistory2tmp(stM);
 		logger.debug("-------END-------");
 	}
-	private void copyTmp2patienten(Map stM) {
+	private void copyTmp2patienten(Map stM, String sourcePatienten) {
 		logger.debug("-------BEGIN-------");
-		String targetPatienten=" SELECT patient, forename, sex, birthdate, idpatient FROM tmp.patient ";
-		List<Map<String, Object>> tmpPatientenList = simpleJdbc.queryForList(targetPatienten);
+		List<Map<String, Object>> tmpPatientenList = simpleJdbc.queryForList(sourcePatienten);
+		logger.debug("-------BEGIN-------"+tmpPatientenList.size());
 		for (Map patientMap : tmpPatientenList) {
 			String patient=(String) patientMap.get("patient");
 			String forename=(String) patientMap.get("forename");
