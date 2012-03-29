@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service("patientenSynchronization")
 public class PatientenSynchronization {
+	@Autowired @Qualifier("simpleJdbc3")	private	JdbcTemplate	simpleJdbc3;
 	@Autowired @Qualifier("simpleJdbc2")	private	JdbcTemplate	simpleJdbc2;
 	@Autowired @Qualifier("simpleJdbc")		private	JdbcTemplate	simpleJdbc;
 	private final Log logger = LogFactory.getLog(getClass());
@@ -24,15 +25,23 @@ public class PatientenSynchronization {
 	public void updatePatienten() {
 		logger.debug("-------BEGIN-------");
 		Map stM=new HashMap();
-//		addPatient(stM);
-		copyPatienten2tmp(stM);
+		int stgeorg_maxPatiantId = maxPatiantId("tmp",simpleJdbc);
+		int praxisluisa_maxPatiantId = maxPatiantId("praxisluisa",simpleJdbc);
+		logger.debug("-------END-------"+stgeorg_maxPatiantId);
+		logger.debug("-------END-------"+praxisluisa_maxPatiantId);
+		copyPatienten2tmp(stM,"tmp",stgeorg_maxPatiantId,simpleJdbc2);
+		copyPatienten2tmp(stM,"praxisluisa",stgeorg_maxPatiantId,simpleJdbc3);
 //		String sourcePatienten=" SELECT patient, forename, sex, birthdate, idpatient FROM tmp.patient ";
+		String dbschema = "tmp";
 		String sourcePatienten=" SELECT tp.patient, forename, sex, birthdate, idpatient " +
-				" FROM tmp.patient AS tp LEFT JOIN patientows1stgeorg  ON tp.idpatient=ows1stgeorg " +
+				" FROM " +dbschema +".patient AS tp LEFT JOIN patientows1stgeorg  ON tp.idpatient=ows1stgeorg " +
 				" WHERE ows1stgeorg IS NULL";
-		copyTmp2patienten(stM,sourcePatienten);
+//		copyTmp2patienten(stM,sourcePatienten);
 //		copyPatientenHistory2tmp(stM);
 		logger.debug("-------END-------");
+	}
+	private int maxPatiantId(String dbschema, JdbcTemplate simpleJdbc32) {
+		return simpleJdbc32.queryForInt("SELECT max(idpatient) FROM " +dbschema +".patient");
 	}
 	private void copyTmp2patienten(Map stM, String sourcePatienten) {
 		logger.debug("-------BEGIN-------");
@@ -55,40 +64,24 @@ public class PatientenSynchronization {
 		}
 		logger.debug("-------END-------");
 	}
-	private void addPatient(Map stM) {
-		Calendar birthDateCalendar = Calendar.getInstance();
-		birthDateCalendar.set(Calendar.YEAR, 1939);
-		Patient patient = new Patient("Dun","Bunn","M",birthDateCalendar.getTime());
-		logger.debug(patient);
-		patient.persist();
-		logger.debug(patient);
-	}
 	int idFolder=1048962;
-	private void copyPatienten2tmp(Map stM) {
+	private void copyPatienten2tmp(Map stM, String schemadb, int maxPatiantId, JdbcTemplate simpleJdbc32) {
 		String sourcePatienten="SELECT patient, forename, sex, birthdate, idpatient, patientT.did AS idfolder " +
 		" FROM patient,tree patientT " +
 		" WHERE idpatient=patientT.id " +
-		"AND birthdate IS NOT NULL" +
+		" AND birthdate IS NOT NULL " +
+		" AND idpatient>? " +
 //		" AND patientT.did="+idFolder +
 		"";
 		logger.debug(sourcePatienten);
-		List<Map<String, Object>> copyPatientenList = simpleJdbc2.queryForList(sourcePatienten);
-		logger.debug("delete BEGIN");
-		simpleJdbc.update("DELETE FROM tmp.patient");
+		List<Map<String, Object>> copyPatientenList = simpleJdbc32.queryForList(sourcePatienten,maxPatiantId);
+//		logger.debug("delete BEGIN");
+//		simpleJdbc.update("DELETE FROM tmp.patient");
 		logger.debug("copy BEGIN");
 		for (Map<String, Object> map : copyPatientenList)
-			simpleJdbc.update("INSERT INTO tmp.patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
+			simpleJdbc.update("INSERT INTO " +schemadb +".patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
 			" VALUES (?,?,?,?,?,?) ",map.values().toArray());
 		
-		logger.debug("END");
-		String targetPatienten=" SELECT " +
-" sp.patient, sp.forename, sp.sex, sp.birthdate, sp.idpatient AS ids, tp.idpatient AS idt " +
-" FROM tmp.patient sp LEFT JOIN patient tp " +
-" ON sp.patient=tp.patient AND sp.forename=tp.forename AND sp.sex=tp.sex " +
-" AND CAST(sp.birthdate AS date)=CAST(tp.birthdate AS date) " +
-"";
-		logger.debug(targetPatienten);
-//		setCopyPatientenList(simpleJdbc.queryForList(targetPatienten),stM);
 		logger.debug("END");
 	}
 	public void setCopyPatientenList(List<Map<String, Object>> stPatientenList, Map stM) {
