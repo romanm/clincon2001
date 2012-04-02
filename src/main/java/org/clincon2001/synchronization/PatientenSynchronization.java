@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service("patientenSynchronization")
 public class PatientenSynchronization {
@@ -22,6 +23,7 @@ public class PatientenSynchronization {
 	@Autowired @Qualifier("simpleJdbc")		private	JdbcTemplate	simpleJdbc;
 	private final Log logger = LogFactory.getLog(getClass());
 
+	@Transactional
 	public void updatePatienten() {
 		logger.debug("-------BEGIN-------");
 		Map stM=new HashMap();
@@ -42,23 +44,62 @@ public class PatientenSynchronization {
 		logger.debug("-------END-------");
 	}
 	private void copyNewPatientdb1to2() {
-		String sql="SELECT pj.* FROM praxisLuisa.patient pj LEFT JOIN tmp.patient ps " +
+		String sql="SELECT pj.*, ps.idpatient AS psidpatient FROM praxisLuisa.patient pj LEFT JOIN tmp.patient ps " +
 				" ON (pj.forename=ps.forename " +
 				" AND pj.patient=ps.patient " +
 				" AND pj.sex=ps.sex " +
 				" AND CAST(pj.birthdate AS date)=CAST(ps.birthdate AS date) " +
 				" ) " +
-				" WHERE ps.forename IS NULL AND pj.idfolder=?";
+				" WHERE " +
+				" ps.forename IS NULL AND " +
+				" pj.idfolder=?";
+		logger.debug(sql+idFolder);
 		List<Map<String, Object>> newPatientsList = simpleJdbc.queryForList(sql,idFolder);
-		if(newPatientsList.size()>0)
-		{
-			Map<String, Object> map = newPatientsList.get(0);
+		int i=0;
+		for (Map<String, Object> map : newPatientsList) {
+			i++;
 			logger.debug(map);
-			insertNewPatient(map);
+			synchronizationNewPatient(map);
+			if(i==10)
+				break;
 		}
+		
+//		if(newPatientsList.size()>0)
+//		{
+//			Map<String, Object> map = newPatientsList.get(0);
+//			logger.debug(map);
+//			synchronizationNewPatient(map);
+//		}
 	}
-	private void insertNewPatient(Map<String, Object> map) {
-		int newPatientId=nextId(stGeorgJdbc);
+	private void synchronizationNewPatient(Map<String, Object> map) {
+		Integer psidpatient=(Integer) map.get("psidpatient");
+		Integer idpatient=(Integer) map.get("idpatient");
+		logger.debug("psidpatient="+psidpatient);
+//		if(true)			return;
+		Integer newPatientId=psidpatient;
+		if(null==psidpatient||0==psidpatient)
+		{
+			newPatientId = insertNewPatient(map);
+		}
+		String sql = "SELECT * FROM tree WHERE tab_name='url' AND did=?";
+		List<Map<String, Object>> patientUrlList = stGeorgJdbc.queryForList(sql,newPatientId);
+		for (Map<String, Object> map2 : patientUrlList) {
+			String url = (String) map2.get("url");
+			if("johanisplatz".contains(url))
+				return;
+		}
+		//Insert url to other DB.
+		int patientUrlId=nextId(stGeorgJdbc);
+		logger.debug("patientUrlId="+patientUrlId);
+		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
+				" VALUES (?,?,?,?,?,?) ",patientUrlId,"url",newPatientId,patientUrlId,newPatientId,patientUrlId);
+		stGeorgJdbc.update("INSERT INTO url (idurl, url, text)" +
+				" VALUES (?,?,?) ",patientUrlId,"http://localhost:8080/johanisplatz/patient="+idpatient,"link");
+	}
+	private int insertNewPatient(Map<String, Object> map) {
+		int newPatientId;
+		newPatientId=nextId(stGeorgJdbc);
+		logger.debug("newPatientId="+newPatientId);
 		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
 				" VALUES (?,?,?,?,?,?) ",newPatientId,"patient",idFolder,newPatientId,newPatientId,newPatientId);
 		Date mdate = Calendar.getInstance().getTime();
@@ -67,15 +108,10 @@ public class PatientenSynchronization {
 		String patient=(String) map.get("patient");
 		String forename=(String) map.get("forename");
 		String sex=(String) map.get("sex");
-		Integer idpatient=(Integer) map.get("idpatient");
 		Date birthDate=(Date) map.get("birthdate");
 		stGeorgJdbc.update("INSERT INTO patient (patient, forename, sex, birthdate,idpatient)" +
-		" VALUES (?,?,?,?,?) ",patient,forename,sex,birthDate,newPatientId);
-		int patientUrlId=nextId(stGeorgJdbc);
-		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
-				" VALUES (?,?,?,?,?,?) ",patientUrlId,"url",newPatientId,patientUrlId,newPatientId,patientUrlId);
-		stGeorgJdbc.update("INSERT INTO url (idurl, url, text)" +
-				" VALUES (?,?,?) ",patientUrlId,"http://localhost:8080/johanisplatz/explorer="+idpatient,"Dieser Patient in alte Johanisplatz Databank.");
+				" VALUES (?,?,?,?,?) ",patient,forename,sex,birthDate,newPatientId);
+		return newPatientId;
 	}
 	private int nextId(JdbcTemplate simpleJdbc32) {
 		return simpleJdbc32.queryForInt("SELECT * FROM nextval('dbid');");
