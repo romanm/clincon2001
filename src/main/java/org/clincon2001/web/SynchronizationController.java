@@ -20,3 +20,5 @@ public class SynchronizationController {
 		return "redirect:/";
 	}
 }
+
+

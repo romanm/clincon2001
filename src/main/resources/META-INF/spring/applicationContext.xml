@@ -93,6 +93,9 @@ xmlns:jee="http://www.springframework.org/schema/jee"
 	</bean>
 	<bean id="dataSource2import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
+		<!-- 
+		<property name="url" value="jdbc:postgresql://localhost:15432/sg4import" />
+		 -->
 		<property name="url" value="jdbc:postgresql://localhost/stgeorg4Import" />
 		<property name="username" value="ows_edit" />
 		<property name="password" value="ows123" />

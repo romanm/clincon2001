@@ -22,18 +22,20 @@ public class PatientenSynchronization {
 	@Autowired @Qualifier("simpleJdbc2")	private	JdbcTemplate	stGeorgJdbc;
 	@Autowired @Qualifier("simpleJdbc")		private	JdbcTemplate	simpleJdbc;
 	private final Log logger = LogFactory.getLog(getClass());
-
+	String stationName = "johanisplatz";
+	int idFolder=1048962;
 	@Transactional
 	public void updatePatienten() {
 		logger.debug("-------BEGIN-------");
 		Map stM=new HashMap();
-		int stgeorg_maxPatiantId = maxPatiantId("tmp",simpleJdbc);
+//		int stgeorg_maxPatiantId = maxPatiantId("tmp",simpleJdbc);
 		int praxisluisa_maxPatiantId = maxPatiantId("praxisluisa",simpleJdbc);
-		logger.debug("-------END-------"+stgeorg_maxPatiantId);
+//		logger.debug("-------END-------"+stgeorg_maxPatiantId);
 		logger.debug("-------END-------"+praxisluisa_maxPatiantId);
-		copyPatienten2tmp(stM,"tmp",stgeorg_maxPatiantId,stGeorgJdbc);
-		copyPatienten2tmp(stM,"praxisluisa",stgeorg_maxPatiantId,johanisPlatzJdbc);
-		copyNewPatientdb1to2();
+		copyPatientenWithoutUrl2tmp(stM);
+		copyPatienten2tmp(stM,"praxisluisa",praxisluisa_maxPatiantId,johanisPlatzJdbc);
+		copyNewPatientUrldb1to2();
+//		copyNewPatientdb1to2();
 //		String sourcePatienten=" SELECT patient, forename, sex, birthdate, idpatient FROM tmp.patient ";
 		String dbschema = "tmp";
 		String sourcePatienten=" SELECT tp.patient, forename, sex, birthdate, idpatient " +
@@ -43,9 +45,38 @@ public class PatientenSynchronization {
 //		copyPatientenHistory2tmp(stM);
 		logger.debug("-------END-------");
 	}
+	private void copyNewPatientUrldb1to2() {
+		String sqlPatientenWithoutUrl="SELECT ps.idpatient AS idp, pj.idpatient AS idpOld FROM tmp.patient ps, praxisLuisa.patient  pj" +
+				" WHERE" +
+				" lower(pj.forename)=lower(ps.forename)  AND pj.patient=ps.patient  AND pj.sex=ps.sex " +
+				" AND CAST(pj.birthdate AS date)=CAST(ps.birthdate AS date) " +
+				" ORDER BY idp";
+		logger.debug(sqlPatientenWithoutUrl);
+		List<Map<String, Object>> newPatientsList = simpleJdbc.queryForList(sqlPatientenWithoutUrl);
+		logger.debug(newPatientsList.size());
+		int i=0;
+		for (Map<String, Object> map : newPatientsList) {
+			i++;
+			logger.debug(map);
+			Integer idpatient=(Integer) map.get("idp");
+			Integer idpatientOld=(Integer) map.get("idpOld");
+			logger.debug(idpatient+"/"+idpatientOld);
+			addUrl2patient(idpatientOld, idpatient,stationName );
+			if(i==50)
+				break;
+		}
+	}
+	private void addUrl2patient(Integer idpatientInOldDB, Integer idPatient, String stationName) {
+		int patientUrlId=nextId(stGeorgJdbc);
+		logger.debug("patientUrlId="+patientUrlId);
+		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
+				" VALUES (?,?,?,?,?,?) ",patientUrlId,"url",idPatient,patientUrlId,idPatient,patientUrlId);
+		stGeorgJdbc.update("INSERT INTO url (idurl, url, text)" +
+				" VALUES (?,?,?) ",patientUrlId,"http://localhost:8080/" +stationName +"/patient="+idpatientInOldDB,"link");
+	}
 	private void copyNewPatientdb1to2() {
 		String sql="SELECT pj.*, ps.idpatient AS psidpatient FROM praxisLuisa.patient pj LEFT JOIN tmp.patient ps " +
-				" ON (pj.forename=ps.forename " +
+				" ON (lower(pj.forename)=lower(ps.forename) " +
 				" AND pj.patient=ps.patient " +
 				" AND pj.sex=ps.sex " +
 				" AND CAST(pj.birthdate AS date)=CAST(ps.birthdate AS date) " +
@@ -71,31 +102,26 @@ public class PatientenSynchronization {
 //			synchronizationNewPatient(map);
 //		}
 	}
+	
 	private void synchronizationNewPatient(Map<String, Object> map) {
 		Integer psidpatient=(Integer) map.get("psidpatient");
-		Integer idpatient=(Integer) map.get("idpatient");
+		Integer idpatientInOldDB=(Integer) map.get("idpatient");
 		logger.debug("psidpatient="+psidpatient);
 //		if(true)			return;
 		Integer newPatientId=psidpatient;
 		if(null==psidpatient||0==psidpatient)
-		{
 			newPatientId = insertNewPatient(map);
-		}
 		String sql = "SELECT * FROM tree WHERE tab_name='url' AND did=?";
 		List<Map<String, Object>> patientUrlList = stGeorgJdbc.queryForList(sql,newPatientId);
 		for (Map<String, Object> map2 : patientUrlList) {
 			String url = (String) map2.get("url");
-			if("johanisplatz".contains(url))
+			if(stationName.contains(url))
 				return;
 		}
 		//Insert url to other DB.
-		int patientUrlId=nextId(stGeorgJdbc);
-		logger.debug("patientUrlId="+patientUrlId);
-		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
-				" VALUES (?,?,?,?,?,?) ",patientUrlId,"url",newPatientId,patientUrlId,newPatientId,patientUrlId);
-		stGeorgJdbc.update("INSERT INTO url (idurl, url, text)" +
-				" VALUES (?,?,?) ",patientUrlId,"http://localhost:8080/johanisplatz/patient="+idpatient,"link");
+		addUrl2patient(idpatientInOldDB, newPatientId,stationName );
 	}
+	
 	private int insertNewPatient(Map<String, Object> map) {
 		int newPatientId;
 		newPatientId=nextId(stGeorgJdbc);
@@ -140,7 +166,24 @@ public class PatientenSynchronization {
 		}
 		logger.debug("-------END-------");
 	}
-	int idFolder=1048962;
+	
+	private void copyPatientenWithoutUrl2tmp(Map stM) {
+		String patientenWithoutUrlSql="SELECT patient, forename, sex, birthdate, idpatient, patientT.did  AS idfolder " +
+				" FROM tree AS patientT, patient " +
+				" LEFT JOIN (SELECT * FROM tree,url WHERE idclass=idurl AND url LIKE '%johanisplatz%' ) AS tu " +
+				" ON tu.did=idpatient " +
+				" WHERE patientT.id=idpatient AND tu.did IS NULL " +
+				" AND birthdate IS NOT NULL";
+		logger.debug(patientenWithoutUrlSql);
+		List<Map<String, Object>> copyPatientenList = stGeorgJdbc.queryForList(patientenWithoutUrlSql);
+		logger.debug("delete BEGIN");
+		simpleJdbc.update("DELETE FROM tmp.patient");
+		logger.debug("copy BEGIN");
+		for (Map<String, Object> map : copyPatientenList)
+			simpleJdbc.update("INSERT INTO tmp.patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
+					" VALUES (?,?,?,?,?,?) ",map.values().toArray());
+		logger.debug("END");
+	}
 	private void copyPatienten2tmp(Map stM, String schemadb, int maxPatiantId, JdbcTemplate simpleJdbc32) {
 		String sourcePatienten="SELECT patient, forename, sex, birthdate, idpatient, patientT.did AS idfolder " +
 		" FROM patient,tree patientT " +
@@ -152,7 +195,7 @@ public class PatientenSynchronization {
 		logger.debug(sourcePatienten);
 		List<Map<String, Object>> copyPatientenList = simpleJdbc32.queryForList(sourcePatienten,maxPatiantId);
 //		logger.debug("delete BEGIN");
-//		simpleJdbc.update("DELETE FROM tmp.patient");
+//		simpleJdbc.update("DELETE FROM " +schemadb+".patient");
 		logger.debug("copy BEGIN");
 		for (Map<String, Object> map : copyPatientenList)
 			simpleJdbc.update("INSERT INTO " +schemadb +".patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
