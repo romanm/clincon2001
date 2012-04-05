@@ -19,5 +19,10 @@
 				patient sinchronisation
 			</a>
 		</p>
+		<p>
+			<a href="tumorboard">
+			tumorboard
+			</a>
+		</p>
 	</util:panel>
 </div>

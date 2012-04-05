@@ -23,6 +23,7 @@ import org.springframework.web.util.WebUtils;
 @Controller
 @RooWebScaffold(path = "diagnoses", formBackingObject = Diagnosis.class)
 public class DiagnosisController {
+	private final Log logger = LogFactory.getLog(getClass());
 
 	@RequestMapping(method = RequestMethod.POST, produces = "text/html")
     public String create(@Valid Diagnosis diagnosis, BindingResult bindingResult, Model uiModel, HttpServletRequest httpServletRequest) {
@@ -48,7 +49,6 @@ public class DiagnosisController {
         return "diagnoses/show";
     }
 
-	private final Log logger = LogFactory.getLog(getClass());
 	@RequestMapping(produces = "text/html")
     public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
 		logger.info("-------BEGIN---------------");
