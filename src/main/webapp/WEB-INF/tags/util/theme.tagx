@@ -19,6 +19,7 @@
       </spring:url>
       <spring:message code="global_theme_standard" var="theme_standard" htmlEscape="false" />
       <a href="${url_theme1}" title="${fn:escapeXml(theme_standard)}">${fn:escapeXml(theme_standard)}</a>
+      
       <c:out value=" | " />
       <spring:url var="url_theme2" value="">
         <spring:param name="theme" value="alt" />
@@ -31,6 +32,19 @@
       </spring:url>
       <spring:message code="global_theme_alt" var="theme_alt" htmlEscape="false" />
       <a href="${url_theme2}" title="${fn:escapeXml(theme_alt)}">${fn:escapeXml(theme_alt)}</a>
+      
+      <c:out value=" | " />
+      <spring:url var="url_theme3" value="">
+        <spring:param name="theme" value="w3mainTubo" />
+        <c:if test="${not empty param.page}">
+          <spring:param name="page" value="${param.page}" />
+        </c:if>
+        <c:if test="${not empty param.size}">
+          <spring:param name="size" value="${param.size}" />
+        </c:if>
+      </spring:url>
+      <spring:message code="global_theme_w3mainTubo" var="theme_w3mainTubo" htmlEscape="false" />
+      <a href="${url_theme3}" title="${fn:escapeXml(theme_w3mainTubo)}">${fn:escapeXml(theme_w3mainTubo)}</a>
     </span>
   </c:if>
 </jsp:root>
