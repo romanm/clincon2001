@@ -4,4 +4,7 @@
 	<definition extends="w3main" name="tumorboard/home">
 		<put-attribute name="body" value="/WEB-INF/views/tumorboard/home.jspx" />
 	</definition>
+	<definition extends="w3main" name="tumorboard/show">
+		<put-attribute name="body" value="/WEB-INF/views/tumorboard/show.jspx" />
+	</definition>
 </tiles-definitions>

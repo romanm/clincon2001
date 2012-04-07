@@ -10,7 +10,10 @@
 		<h2>Was ist Tumorboard Seite?</h2>
 		<p>Tumorboard Seite - ist Krankenhaus Dokumentation Service für Vorbereitung und Begleitung des Tumorboards. </p>
 		<div class="aside">
+		<!-- 
 			<h3>High­-Lights</h3>
+		 -->
+			<h3>Höhepunkte</h3>
 			<ul>
 				<li><a href="newpatient"> <cite>Neue Patient </cite> Tumorboard anmelden</a></li>
 				<li><a href="tumorboard"> <cite>“Aktuele Tumorboard”</cite> offnen</a></li>
@@ -18,12 +21,12 @@
 		</div>
 	</div>
 
-	<h3 class="alt">Spring Web Flow and JSF 2 with PrimeFaces components</h3>
-	<p>Key features illustrated in this sample:  content3 </p>
+	<h3 class="alt">Functionalitet Tumorboard Service</h3>
+	<p>Volgende Functionen von Tumorboard-Service stehen Ihn zu verfügung: </p>
 
 	<ul>
-		<li>A declarative navigation model enabling full browser button support and dynamic navigation rules</li>
-		<li>A fine-grained state management model, including support for conversation, view, and flash scopes</li>
+		<li>Tumorboard anmelden</li>
+		<li>Tumorboard support</li>
 		<li>Partial page rendering via Ajax with JSF 2</li>
 		<li>Modularization of web application functionality by domain use case, illustrating project structure best-practices</li>
 		<li>Spring Security integration</li>

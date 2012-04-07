@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<div xmlns:field="urn:jsptagdir:/WEB-INF/tags/form/fields"
+	xmlns:spring="http://www.springframework.org/tags"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:jsp="http://java.sun.com/JSP/Page"
+	xmlns:page="urn:jsptagdir:/WEB-INF/tags/form" version="2.0">
+	<jsp:directive.page contentType="text/html;charset=UTF-8" />
+	<jsp:output omit-xml-declaration="yes" />
+
+<div>
+	<spring:message code="label_org_clincon2001_domain_patient" />:
+	${clincon.patient.givenname}
+	${clincon.patient.familyname}
+</div>
+<div>
+	<spring:message code="label_org_clincon2001_domain_diagnosis" />:
+	<c:forEach var="ccdiagnosis" items="${clincon.ccdiagnoses }">
+	${ccdiagnosis.diagnosis.diagnosisName}
+	</c:forEach>
+</div>
+	<!-- 
+	<page:show id="ps_org_clincon2001_domain_Clincon" object="${clincon}"
+		path="/clincons" z="mj/7fo6m0/vtyFK2aVH+dcgb+rQ=">
+		<field:display field="ccdate"
+			id="s_org_clincon2001_domain_Clincon_ccdate" object="${clincon}"
+			z="icaAXHvQCLSZHaNifK1GuEIF21Q=" />
+		<field:display field="patient"
+			id="s_org_clincon2001_domain_Clincon_patient" object="${clincon}"
+			z="vEYwYyNVR3R0QSazs1Gdc3n+rZU=" />
+		<field:display field="anamnesis"
+			id="s_org_clincon2001_domain_Clincon_anamnesis" object="${clincon}"
+			z="8WrhLBRJntj381tGu9hV2MI/xH8=" />
+		<field:display field="suggestion"
+			id="s_org_clincon2001_domain_Clincon_suggestion" object="${clincon}"
+			z="1opi1N3wjVmHavWMAqQwOnWmY1o=" />
+	</page:show>
+	 -->
+</div>
