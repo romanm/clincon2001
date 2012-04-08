@@ -27,7 +27,8 @@
 	<ul>
 		<li>Tumorboard anmelden</li>
 		<li>Tumorboard support</li>
-		<li>Partial page rendering via Ajax with JSF 2</li>
+		<li><a href="tumorboard/107">test tubo</a></li>
+		<li><a href="tumorboard/list">test list</a></li>
 		<li>Modularization of web application functionality by domain use case, illustrating project structure best-practices</li>
 		<li>Spring Security integration</li>
 		<li>Page layout with Blueprint CSS</li>
