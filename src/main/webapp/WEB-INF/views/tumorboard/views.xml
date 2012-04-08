@@ -7,6 +7,9 @@
 	<definition extends="w3main" name="tumorboard/show">
 		<put-attribute name="body" value="/WEB-INF/views/tumorboard/show.jspx" />
 	</definition>
+	<definition extends="w3main" name="tumorboard/tumorboarddate">
+		<put-attribute name="body" value="/WEB-INF/views/tumorboard/tumorboarddate.jspx" />
+	</definition>
 	<definition extends="w3main" name="tumorboard/list">
 		<put-attribute name="body" value="/WEB-INF/views/tumorboard/list.jspx" />
 	</definition>

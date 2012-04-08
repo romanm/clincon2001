@@ -27,8 +27,9 @@
 	<ul>
 		<li>Tumorboard anmelden</li>
 		<li>Tumorboard support</li>
-		<li><a href="tumorboard/107">test tubo</a></li>
+		<li><a href="tumorboard/id-107">test tubo</a></li>
 		<li><a href="tumorboard/list">test list</a></li>
+		<li><a href="tumorboard/td-2012-01-01">test td-2012-01-01</a></li>
 		<li>Modularization of web application functionality by domain use case, illustrating project structure best-practices</li>
 		<li>Spring Security integration</li>
 		<li>Page layout with Blueprint CSS</li>

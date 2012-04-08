@@ -1,5 +1,8 @@
 package org.clincon2001.web;
 
+import java.util.Calendar;
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.clincon2001.domain.Clincon;
@@ -19,7 +22,26 @@ public class TumorboardController {
 		logger.info("-------BEGIN---------------");
 		return "tumorboard/home";
 	}
-	@RequestMapping(value = "/{id}", produces = "text/html")
+	@RequestMapping(value = "/td-{yyyy}-{mm}-{dd}", produces = "text/html")
+	public String date(
+			@PathVariable("yyyy") Integer yyyy, 
+			@PathVariable("mm") Integer mm, 
+			@PathVariable("dd") Integer dd, 
+			Model uiModel) {
+		Date tumorboarddate = convert2date(yyyy, mm, dd);
+		logger.debug(tumorboarddate);
+		uiModel.addAttribute("tumorboarddate", tumorboarddate);
+		return "tumorboard/tumorboarddate";
+	}
+	private Date convert2date(Integer yyyy, Integer mm, Integer dd) {
+		Calendar instance = Calendar.getInstance();
+		instance.set(Calendar.YEAR, yyyy);
+		instance.set(Calendar.MONTH, mm-1);
+		instance.set(Calendar.DAY_OF_MONTH, dd);
+		Date tumorboarddate = instance.getTime();
+		return tumorboarddate;
+	}
+	@RequestMapping(value = "/id-{id}", produces = "text/html")
 	public String show(@PathVariable("id") Long id, Model uiModel) {
 		logger.info("-------BEGIN---------------"+id);
 		Clincon findClincon = Clincon.findClincon(id);
