@@ -8,6 +8,17 @@
 	<jsp:output omit-xml-declaration="yes" />
 	
 	
+	<c:forEach var="ccdate" items="${ccdates}">
+		<div>
+			${ccdate.clincondatetime }
+			<c:forEach var="clincon" items="${ccdate.clincons}">
+				<div>
+					<dpatient:show patient="${clincon.patient}"/>
+				</div>
+			</c:forEach>
+		</div>
+	</c:forEach>
+	<hr/>
 	<c:forEach var="clincon" items="${clincons}">
 		<div>
 			<dpatient:show patient="${clincon.patient}"/>

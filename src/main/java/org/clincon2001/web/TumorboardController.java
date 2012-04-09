@@ -2,9 +2,11 @@ package org.clincon2001.web;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.clincon2001.domain.Ccdate;
 import org.clincon2001.domain.Clincon;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,8 +40,7 @@ public class TumorboardController {
 		instance.set(Calendar.YEAR, yyyy);
 		instance.set(Calendar.MONTH, mm-1);
 		instance.set(Calendar.DAY_OF_MONTH, dd);
-		Date tumorboarddate = instance.getTime();
-		return tumorboarddate;
+		return instance.getTime();
 	}
 	@RequestMapping(value = "/id-{id}", produces = "text/html")
 	public String show(@PathVariable("id") Long id, Model uiModel) {
@@ -52,7 +53,13 @@ public class TumorboardController {
 	}
 
 	@RequestMapping(value = "/list", produces = "text/html")
-	public String list(@RequestParam(value = "page", required = false) Integer page, @RequestParam(value = "size", required = false) Integer size, Model uiModel) {
+	public String list(
+			@RequestParam(value = "page", required = false) Integer page, 
+			@RequestParam(value = "size", required = false) Integer size, 
+			Model uiModel
+			) {
+		logger.debug("size="+size);
+		logger.debug("page="+page);
 		if (page != null || size != null) {
 			int sizeNo = size == null ? 10 : size.intValue();
 			final int firstResult = page == null ? 0 : (page.intValue() - 1) * sizeNo;
@@ -62,6 +69,9 @@ public class TumorboardController {
 		} else {
 			uiModel.addAttribute("clincons", Clincon.findAllClincons());
 		}
+		List<Ccdate> findAllCcdates = Ccdate.findAllCcdates();
+		logger.debug("findAllCcdates.size()="+findAllCcdates.size());
+		uiModel.addAttribute("ccdates", findAllCcdates);
 		return "tumorboard/list";
 	}
 
