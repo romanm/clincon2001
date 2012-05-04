@@ -96,15 +96,15 @@ xmlns:jee="http://www.springframework.org/schema/jee"
 		<!-- 
 		<property name="url" value="jdbc:postgresql://localhost:15432/sg4import" />
 		 -->
-		<property name="url" value="jdbc:postgresql://localhost/stgeorg4Import" />
-		<property name="username" value="ows_edit" />
-		<property name="password" value="ows123" />
+		<property name="url" value="${database2.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
 	</bean>
 	<bean id="dataSource3import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost/praxisLuisa" />
-		<property name="username" value="ows_edit" />
-		<property name="password" value="ows123" />
+		<property name="url" value="${database3.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
 	</bean>
 	
 </beans>
