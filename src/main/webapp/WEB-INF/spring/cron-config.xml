@@ -48,7 +48,8 @@
 		<property name="jobDetail" ref="cronTestJobDetail"/>
 		<!-- 
 		<property name="cronExpression" value="0/55 * * * * ?"/>
-		 -->
 		<property name="cronExpression" value="0 0/30 * * * ?"/>
+		 -->
+		<property name="cronExpression" value="0 0/5 * * * ?"/>
 	</bean>
 </beans>

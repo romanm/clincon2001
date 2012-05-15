@@ -18,21 +18,26 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("patientenSynchronization")
 public class PatientenSynchronization {
-	@Autowired @Qualifier("simpleJdbc3")	private	JdbcTemplate	johanisPlatzJdbc;
-	@Autowired @Qualifier("simpleJdbc2")	private	JdbcTemplate	stGeorgJdbc;
-	@Autowired @Qualifier("simpleJdbc")		private	JdbcTemplate	simpleJdbc;
+	@Autowired @Qualifier("simpleJdbc3")	private		JdbcTemplate	johanisPlatzJdbc;
+	@Autowired @Qualifier("simpleJdbc2")	private		JdbcTemplate	stGeorgJdbc;
+	@Autowired @Qualifier("simpleJdbc")		private		JdbcTemplate	simpleJdbc;
 	private final Log logger = LogFactory.getLog(getClass());
-	String stationName = "johanisplatz";
+//	String stationName = "johanisplatz";
+	String stationName ;
 	int idFolder=1048962;
+	AppUtils appUtils;
 	@Transactional
-	public void updatePatienten() {
+	public void updatePatienten(AppUtils appUtils) {
 		logger.debug("-------BEGIN-------");
+		this.appUtils = appUtils;
+		stationName = appUtils.getContextdb1() ;
 		Map stM=new HashMap();
 //		int stgeorg_maxPatiantId = maxPatiantId("tmp",simpleJdbc);
 		int praxisluisa_maxPatiantId = maxPatiantId("praxisluisa",simpleJdbc);
 //		logger.debug("-------END-------"+stgeorg_maxPatiantId);
-		logger.debug("-------END-------"+praxisluisa_maxPatiantId);
-		copyPatientenWithoutUrl2tmp(stM);
+		logger.debug("praxisluisa_maxPatiantId = "+praxisluisa_maxPatiantId);
+		if(true) return;
+//		copyPatientenWithoutUrl2tmp(stM);
 		copyPatienten2tmp(stM,"praxisluisa",praxisluisa_maxPatiantId,johanisPlatzJdbc);
 		copyNewPatientUrldb1to2();
 //		copyNewPatientdb1to2();
@@ -61,21 +66,24 @@ public class PatientenSynchronization {
 			Integer idpatient=(Integer) map.get("idp");
 			Integer idpatientOld=(Integer) map.get("idpOld");
 			logger.debug(idpatient+"/"+idpatientOld);
-			addUrl2patient(idpatientOld, idpatient,stationName );
+//			addUrl2patient(idpatientOld, idpatient,stationName );
+			addUrl2patient(idpatientOld, idpatient);
 			if(i==50)
 				break;
 		}
 	}
-	private void addUrl2patient(Integer idpatientInOldDB, Integer idPatient, String stationName) {
+//	private void addUrl2patient(Integer idpatientInOldDB, Integer idPatient, String stationName) {
+	private void addUrl2patient(Integer idpatientInOldDB, Integer idPatient) {
 		int patientUrlId=nextId(stGeorgJdbc);
 		logger.debug("patientUrlId="+patientUrlId);
-		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
+		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort) " +
 				" VALUES (?,?,?,?,?,?) ",patientUrlId,"url",idPatient,patientUrlId,idPatient,patientUrlId);
-		stGeorgJdbc.update("INSERT INTO url (idurl, url, text)" +
-				" VALUES (?,?,?) ",patientUrlId,"http://localhost:8080/" +stationName +"/patient="+idpatientInOldDB,"link");
+		stGeorgJdbc.update("INSERT INTO url (idurl, url, text) " +
+				" VALUES (?,?,?) ",patientUrlId, (String)appUtils.getUrldb1()+idpatientInOldDB, "link");
+//		" VALUES (?,?,?) ",patientUrlId,"http://localhost:8080/" +stationName +"/patient="+idpatientInOldDB,"link");
 	}
 	private void copyNewPatientdb1to2() {
-		String sql="SELECT pj.*, ps.idpatient AS psidpatient FROM praxisLuisa.patient pj LEFT JOIN tmp.patient ps " +
+		String sql=" SELECT pj.*, ps.idpatient AS psidpatient FROM praxisLuisa.patient pj LEFT JOIN tmp.patient ps " +
 				" ON (lower(pj.forename)=lower(ps.forename) " +
 				" AND pj.patient=ps.patient " +
 				" AND pj.sex=ps.sex " +
@@ -83,7 +91,7 @@ public class PatientenSynchronization {
 				" ) " +
 				" WHERE " +
 				" ps.forename IS NULL AND " +
-				" pj.idfolder=?";
+				" pj.idfolder=? ";
 		logger.debug(sql+idFolder);
 		List<Map<String, Object>> newPatientsList = simpleJdbc.queryForList(sql,idFolder);
 		int i=0;
@@ -119,7 +127,8 @@ public class PatientenSynchronization {
 				return;
 		}
 		//Insert url to other DB.
-		addUrl2patient(idpatientInOldDB, newPatientId,stationName );
+//		addUrl2patient(idpatientInOldDB, newPatientId,stationName );
+		addUrl2patient(idpatientInOldDB, newPatientId );
 	}
 	
 	private int insertNewPatient(Map<String, Object> map) {
@@ -142,8 +151,16 @@ public class PatientenSynchronization {
 	private int nextId(JdbcTemplate simpleJdbc32) {
 		return simpleJdbc32.queryForInt("SELECT * FROM nextval('dbid');");
 	}
+	public int lastCopydPatiantId(String dbschema) {
+		int lastCopydPatientId = maxPatiantId(dbschema, simpleJdbc);
+		return lastCopydPatientId;
+	}
 	private int maxPatiantId(String dbschema, JdbcTemplate simpleJdbc32) {
-		return simpleJdbc32.queryForInt("SELECT max(idpatient) FROM " +dbschema +".patient");
+		String sql = "SELECT max(idpatient) FROM " +dbschema +".patient";
+		logger.debug(sql);
+		int maxPatiantId = simpleJdbc32.queryForInt(sql);
+		logger.debug("maxPatiantId="+maxPatiantId);
+		return maxPatiantId;
 	}
 	private void copyTmp2patienten(Map stM, String sourcePatienten) {
 		logger.debug("-------BEGIN-------");
@@ -192,7 +209,7 @@ public class PatientenSynchronization {
 		" AND idpatient>? " +
 //		" AND patientT.did="+idFolder +
 		"";
-		logger.debug(sourcePatienten);
+		logger.debug(sourcePatienten+" -- "+maxPatiantId);
 		List<Map<String, Object>> copyPatientenList = simpleJdbc32.queryForList(sourcePatienten,maxPatiantId);
 //		logger.debug("delete BEGIN");
 //		simpleJdbc.update("DELETE FROM " +schemadb+".patient");
