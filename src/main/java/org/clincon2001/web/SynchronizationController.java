@@ -23,7 +23,7 @@ public class SynchronizationController {
 		logger.debug(appUtils);
 		logger.debug(appUtils.getUrldb1());
 		logger.debug(appUtils.getContextdb1());
-		patientenSynchronization.updatePatienten(appUtils);
+		patientenSynchronization.updatePatientenJohannisplatz(appUtils);
 		logger.info("-------END---------------");
 		return "redirect:/";
 	}

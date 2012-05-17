@@ -28,7 +28,7 @@ public class PatientenSynchronization {
 	AppUtils appUtils;
 
 	@Transactional
-	public void updatePatienten(AppUtils appUtils) {
+	public void updatePatientenJohannisplatz(AppUtils appUtils) {
 		logger.debug("-------BEGIN-------");
 		this.appUtils = appUtils;
 		stationName = appUtils.getContextdb1() ;
