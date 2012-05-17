@@ -18,27 +18,42 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service("patientenSynchronization")
 public class PatientenSynchronization {
-	@Autowired @Qualifier("simpleJdbc3")	private		JdbcTemplate	johanisPlatzJdbc;
-	@Autowired @Qualifier("simpleJdbc2")	private		JdbcTemplate	stGeorgJdbc;
-	@Autowired @Qualifier("simpleJdbc")		private		JdbcTemplate	simpleJdbc;
+	@Autowired @Qualifier("simpleJdbc2")	private		JdbcTemplate	db2johanisPlatzJdbc;
+	@Autowired @Qualifier("simpleJdbc1")	private		JdbcTemplate	db1stGeorgJdbc;
+	@Autowired @Qualifier("simpleJdbc")		private		JdbcTemplate	clinconJdbc;
 	private final Log logger = LogFactory.getLog(getClass());
 //	String stationName = "johanisplatz";
 	String stationName ;
 	int idFolder=1048962;
 	AppUtils appUtils;
+
 	@Transactional
 	public void updatePatienten(AppUtils appUtils) {
 		logger.debug("-------BEGIN-------");
 		this.appUtils = appUtils;
 		stationName = appUtils.getContextdb1() ;
+		int stgeorg_maxPatiantId = maxPatiantId("tmp",clinconJdbc);
+		int praxisluisa_maxPatiantId = maxPatiantId("praxisluisa",clinconJdbc);
+		logger.debug("praxisluisa_maxPatiantId = "+praxisluisa_maxPatiantId);
+		copyPatienten2tmp("tmp",stgeorg_maxPatiantId,db1stGeorgJdbc);
+		copyPatienten2tmp("praxisluisa",praxisluisa_maxPatiantId,db2johanisPlatzJdbc);
+//		copyPatientenWithoutUrl2tmp(stM);
+		copyNewPatientdb1to2();
+		logger.debug("-------END-------"+stgeorg_maxPatiantId);
+	}
+
+	public void updatePatienten_old(AppUtils appUtils) {
+		logger.debug("-------BEGIN-------");
+		this.appUtils = appUtils;
+		stationName = appUtils.getContextdb1() ;
 		Map stM=new HashMap();
 //		int stgeorg_maxPatiantId = maxPatiantId("tmp",simpleJdbc);
-		int praxisluisa_maxPatiantId = maxPatiantId("praxisluisa",simpleJdbc);
+		int praxisluisa_maxPatiantId = maxPatiantId("praxisluisa",clinconJdbc);
 //		logger.debug("-------END-------"+stgeorg_maxPatiantId);
 		logger.debug("praxisluisa_maxPatiantId = "+praxisluisa_maxPatiantId);
 		if(true) return;
 //		copyPatientenWithoutUrl2tmp(stM);
-		copyPatienten2tmp(stM,"praxisluisa",praxisluisa_maxPatiantId,johanisPlatzJdbc);
+		copyPatienten2tmp("praxisluisa",praxisluisa_maxPatiantId,db2johanisPlatzJdbc);
 		copyNewPatientUrldb1to2();
 //		copyNewPatientdb1to2();
 //		String sourcePatienten=" SELECT patient, forename, sex, birthdate, idpatient FROM tmp.patient ";
@@ -52,12 +67,12 @@ public class PatientenSynchronization {
 	}
 	private void copyNewPatientUrldb1to2() {
 		String sqlPatientenWithoutUrl="SELECT ps.idpatient AS idp, pj.idpatient AS idpOld FROM tmp.patient ps, praxisLuisa.patient  pj" +
-				" WHERE" +
+				" WHERE " +
 				" lower(pj.forename)=lower(ps.forename)  AND pj.patient=ps.patient  AND pj.sex=ps.sex " +
 				" AND CAST(pj.birthdate AS date)=CAST(ps.birthdate AS date) " +
 				" ORDER BY idp";
 		logger.debug(sqlPatientenWithoutUrl);
-		List<Map<String, Object>> newPatientsList = simpleJdbc.queryForList(sqlPatientenWithoutUrl);
+		List<Map<String, Object>> newPatientsList = clinconJdbc.queryForList(sqlPatientenWithoutUrl);
 		logger.debug(newPatientsList.size());
 		int i=0;
 		for (Map<String, Object> map : newPatientsList) {
@@ -74,11 +89,11 @@ public class PatientenSynchronization {
 	}
 //	private void addUrl2patient(Integer idpatientInOldDB, Integer idPatient, String stationName) {
 	private void addUrl2patient(Integer idpatientInOldDB, Integer idPatient) {
-		int patientUrlId=nextId(stGeorgJdbc);
+		int patientUrlId=nextId(db1stGeorgJdbc);
 		logger.debug("patientUrlId="+patientUrlId);
-		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort) " +
+		db1stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort) " +
 				" VALUES (?,?,?,?,?,?) ",patientUrlId,"url",idPatient,patientUrlId,idPatient,patientUrlId);
-		stGeorgJdbc.update("INSERT INTO url (idurl, url, text) " +
+		db1stGeorgJdbc.update("INSERT INTO url (idurl, url, text) " +
 				" VALUES (?,?,?) ",patientUrlId, (String)appUtils.getUrldb1()+idpatientInOldDB, "link");
 //		" VALUES (?,?,?) ",patientUrlId,"http://localhost:8080/" +stationName +"/patient="+idpatientInOldDB,"link");
 	}
@@ -93,12 +108,14 @@ public class PatientenSynchronization {
 				" ps.forename IS NULL AND " +
 				" pj.idfolder=? ";
 		logger.debug(sql+idFolder);
-		List<Map<String, Object>> newPatientsList = simpleJdbc.queryForList(sql,idFolder);
+		List<Map<String, Object>> newPatientsList = clinconJdbc.queryForList(sql,idFolder);
+		logger.debug(newPatientsList.size());
 		int i=0;
 		for (Map<String, Object> map : newPatientsList) {
 			i++;
 			logger.debug(map);
 			synchronizationNewPatient(map);
+			if(true)	return;
 			if(i==10)
 				break;
 		}
@@ -110,19 +127,21 @@ public class PatientenSynchronization {
 //			synchronizationNewPatient(map);
 //		}
 	}
-	
+
 	private void synchronizationNewPatient(Map<String, Object> map) {
 		Integer psidpatient=(Integer) map.get("psidpatient");
 		Integer idpatientInOldDB=(Integer) map.get("idpatient");
 		logger.debug("psidpatient="+psidpatient);
+		logger.debug("stationName="+stationName);
 //		if(true)			return;
 		Integer newPatientId=psidpatient;
 		if(null==psidpatient||0==psidpatient)
 			newPatientId = insertNewPatient(map);
 		String sql = "SELECT * FROM tree WHERE tab_name='url' AND did=?";
-		List<Map<String, Object>> patientUrlList = stGeorgJdbc.queryForList(sql,newPatientId);
+		List<Map<String, Object>> patientUrlList = db1stGeorgJdbc.queryForList(sql,newPatientId);
 		for (Map<String, Object> map2 : patientUrlList) {
 			String url = (String) map2.get("url");
+			logger.debug("url="+url);
 			if(stationName.contains(url))
 				return;
 		}
@@ -133,18 +152,18 @@ public class PatientenSynchronization {
 	
 	private int insertNewPatient(Map<String, Object> map) {
 		int newPatientId;
-		newPatientId=nextId(stGeorgJdbc);
+		newPatientId=nextId(db1stGeorgJdbc);
 		logger.debug("newPatientId="+newPatientId);
-		stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
+		db1stGeorgJdbc.update("INSERT INTO tree (id, tab_name, did, idclass,iddoc,sort)" +
 				" VALUES (?,?,?,?,?,?) ",newPatientId,"patient",idFolder,newPatientId,newPatientId,newPatientId);
 		Date mdate = Calendar.getInstance().getTime();
-		stGeorgJdbc.update("INSERT INTO history (idhistory, mdate, idauthor)" +
+		db1stGeorgJdbc.update("INSERT INTO history (idhistory, mdate, idauthor)" +
 				" VALUES (?,?,?) ",newPatientId,mdate,newPatientId);
 		String patient=(String) map.get("patient");
 		String forename=(String) map.get("forename");
 		String sex=(String) map.get("sex");
 		Date birthDate=(Date) map.get("birthdate");
-		stGeorgJdbc.update("INSERT INTO patient (patient, forename, sex, birthdate,idpatient)" +
+		db1stGeorgJdbc.update("INSERT INTO patient (patient, forename, sex, birthdate,idpatient)" +
 				" VALUES (?,?,?,?,?) ",patient,forename,sex,birthDate,newPatientId);
 		return newPatientId;
 	}
@@ -152,7 +171,7 @@ public class PatientenSynchronization {
 		return simpleJdbc32.queryForInt("SELECT * FROM nextval('dbid');");
 	}
 	public int lastCopydPatiantId(String dbschema) {
-		int lastCopydPatientId = maxPatiantId(dbschema, simpleJdbc);
+		int lastCopydPatientId = maxPatiantId(dbschema, clinconJdbc);
 		return lastCopydPatientId;
 	}
 	private int maxPatiantId(String dbschema, JdbcTemplate simpleJdbc32) {
@@ -164,7 +183,7 @@ public class PatientenSynchronization {
 	}
 	private void copyTmp2patienten(Map stM, String sourcePatienten) {
 		logger.debug("-------BEGIN-------");
-		List<Map<String, Object>> tmpPatientenList = simpleJdbc.queryForList(sourcePatienten);
+		List<Map<String, Object>> tmpPatientenList = clinconJdbc.queryForList(sourcePatienten);
 		logger.debug("-------BEGIN-------"+tmpPatientenList.size());
 		for (Map patientMap : tmpPatientenList) {
 			String patient=(String) patientMap.get("patient");
@@ -192,17 +211,18 @@ public class PatientenSynchronization {
 				" WHERE patientT.id=idpatient AND tu.did IS NULL " +
 				" AND birthdate IS NOT NULL";
 		logger.debug(patientenWithoutUrlSql);
-		List<Map<String, Object>> copyPatientenList = stGeorgJdbc.queryForList(patientenWithoutUrlSql);
+		List<Map<String, Object>> copyPatientenList = db1stGeorgJdbc.queryForList(patientenWithoutUrlSql);
 		logger.debug("delete BEGIN");
-		simpleJdbc.update("DELETE FROM tmp.patient");
+		clinconJdbc.update("DELETE FROM tmp.patient");
 		logger.debug("copy BEGIN");
 		for (Map<String, Object> map : copyPatientenList)
-			simpleJdbc.update("INSERT INTO tmp.patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
+			clinconJdbc.update("INSERT INTO tmp.patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
 					" VALUES (?,?,?,?,?,?) ",map.values().toArray());
 		logger.debug("END");
 	}
-	private void copyPatienten2tmp(Map stM, String schemadb, int maxPatiantId, JdbcTemplate simpleJdbc32) {
-		String sourcePatienten="SELECT patient, forename, sex, birthdate, idpatient, patientT.did AS idfolder " +
+	private void copyPatienten2tmp(String schemadb, int maxPatiantId, JdbcTemplate simpleJdbc32) {
+		String sourcePatienten=
+		"SELECT patient, forename, sex, birthdate, idpatient, patientT.did AS idfolder " +
 		" FROM patient,tree patientT " +
 		" WHERE idpatient=patientT.id " +
 		" AND birthdate IS NOT NULL " +
@@ -215,7 +235,7 @@ public class PatientenSynchronization {
 //		simpleJdbc.update("DELETE FROM " +schemadb+".patient");
 		logger.debug("copy BEGIN");
 		for (Map<String, Object> map : copyPatientenList)
-			simpleJdbc.update("INSERT INTO " +schemadb +".patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
+			clinconJdbc.update("INSERT INTO " +schemadb +".patient (patient, forename, sex, birthdate,idpatient,idfolder)" +
 			" VALUES (?,?,?,?,?,?) ",map.values().toArray());
 		
 		logger.debug("END");
@@ -242,7 +262,7 @@ public class PatientenSynchronization {
 		stM.put("cntNotCopiedPatient", cntNotCopiedPatient);
 	}
 	private void copyPatientenHistory2tmp(Map stM) {
-		simpleJdbc.update("DELETE FROM tmp.phtree");
+		clinconJdbc.update("DELETE FROM tmp.phtree");
 		String sourcePatientenHistory=
 				" SELECT " +
 						" patientHistoryT.id ,patientHistoryT.tab_name ,patientHistoryT.did ,patientHistoryT.idclass" +
@@ -252,9 +272,9 @@ public class PatientenSynchronization {
 						" ORDER BY did,sort"+
 						"";
 		logger.debug(sourcePatientenHistory);
-		List<Map<String, Object>> copyPatientenHistoryList = stGeorgJdbc.queryForList(sourcePatientenHistory);
+		List<Map<String, Object>> copyPatientenHistoryList = db1stGeorgJdbc.queryForList(sourcePatientenHistory);
 		for (Map<String, Object> map : copyPatientenHistoryList)
-			simpleJdbc.update("INSERT INTO tmp.phtree (id, tab_name, did, idclass,sort)" +
+			clinconJdbc.update("INSERT INTO tmp.phtree (id, tab_name, did, idclass,sort)" +
 					" VALUES (?,?,?,?,?) ",map.values().toArray());
 	}
 

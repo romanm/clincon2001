@@ -89,27 +89,21 @@ xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springf
     <bean id="simpleJdbc" class="org.springframework.jdbc.core.JdbcTemplate" >
 		<constructor-arg ref="dataSource"/>
 	</bean>
-	<!-- 
-	<bean id="simpleJdbc2" class="org.springframework.jdbc.core.simple.SimpleJdbcTemplate">
- -->
+	<bean id="simpleJdbc1" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource1import"/>
+	</bean>
 	<bean id="simpleJdbc2" class="org.springframework.jdbc.core.JdbcTemplate">
 		<constructor-arg ref="dataSource2import"/>
 	</bean>
-	<bean id="simpleJdbc3" class="org.springframework.jdbc.core.JdbcTemplate">
-		<constructor-arg ref="dataSource3import"/>
-	</bean>
-	<bean id="dataSource2import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="dataSource1import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${database.driverClassName}"/>
-		<!-- 
-		<property name="url" value="jdbc:postgresql://localhost:15432/sg4import" />
-		 -->
-		<property name="url" value="${database2.url}" />
+		<property name="url" value="${database1.url}" />
 		<property name="username" value="${database.username}" />
 		<property name="password" value="${database.password}" />
 	</bean>
-	<bean id="dataSource3import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="dataSource2import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${database.driverClassName}"/>
-		<property name="url" value="${database3.url}" />
+		<property name="url" value="${database2.url}" />
 		<property name="username" value="${database.username}" />
 		<property name="password" value="${database.password}" />
 	</bean>
