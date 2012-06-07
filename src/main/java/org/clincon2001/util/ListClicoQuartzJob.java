@@ -19,7 +19,6 @@ public class ListClicoQuartzJob extends QuartzJobBean {
 	protected void executeInternal(JobExecutionContext context)
 			throws JobExecutionException {
 		logger.info("Listing images in image database, scheduled by Quartz");
-		
 	}
 
 }

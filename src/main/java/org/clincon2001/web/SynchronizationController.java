@@ -17,12 +17,19 @@ public class SynchronizationController {
 	@Autowired @Qualifier("appUtils")		private		AppUtils		appUtils;
 //	@Autowired @Qualifier("aput")		private		Map		aput;
 	
+	@RequestMapping(value = "/tuborsyn", produces ="text/html")
+	public String tuborsyn(Model uiModel) {
+		logger.info("-------BEGIN---------------");
+		patientenSynchronization.updatePatientenOws1tubo(appUtils);
+		logger.info("-------END---------------");
+		return "redirect:/";
+	}
 	@RequestMapping(value = "/pasy", produces ="text/html")
 	public String updatePatient(Model uiModel) {
 		logger.info("-------BEGIN---------------");
 		logger.debug(appUtils);
-		logger.debug(appUtils.getUrldb1());
-		logger.debug(appUtils.getContextdb1());
+		logger.debug(appUtils.getUrldb2());
+		logger.debug(appUtils.getContextdb2());
 		patientenSynchronization.updatePatientenJohannisplatz(appUtils);
 		logger.info("-------END---------------");
 		return "redirect:/";

@@ -2,28 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:p="http://www.springframework.org/schema/p" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="       
-	     http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd       
-	     ">
-
-
-
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	">
 	<!-- Default implementation of the ImageDatabase business interface -->
 	<!-- (refers to a LobHandler for handling BLOBs and CLOBs -->
 	<bean id="cronTest" class="org.clincon2001.util.CronTest">
 		<property name="test" value="Hallo cron test!"/>
 	</bean>
-
-	<!-- Quartz Scheduler, with pre-registered triggers -->
-	<!-- Will automatically start scheduling on context startup -->
-	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref local="checkCronTest"/>
-			</list>
-		</property>
-	</bean>
-
 	<!-- Job definition for ListImagesQuartzJob -->
 	<!-- Lists the images in the image database and sends a corresponding mail -->
 	<bean id="listImagesJobDetail" class="org.springframework.scheduling.quartz.JobDetailBean">
@@ -34,14 +20,12 @@
 			</map>
 		</property>
 	</bean>
-
 	<!-- Job definition that delegates to the specified 'imageDatabase' method -->
 	<!-- Convenient way of invoking existing business logic instead of writing a job -->
 	<bean id="cronTestJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
 		<property name="targetObject" ref="cronTest"/>
 		<property name="targetMethod" value="checkTest"/>
 	</bean>
-
 	<!-- Trigger for the job defined above -->
 	<!-- Registered by the 'scheduler' bean -->
 	<bean id="checkCronTest" class="org.springframework.scheduling.quartz.CronTriggerBean">
@@ -51,5 +35,14 @@
 		<property name="cronExpression" value="0 0/30 * * * ?"/>
 		 -->
 		<property name="cronExpression" value="0 0/5 * * * ?"/>
+	</bean>
+	<!-- Quartz Scheduler, with pre-registered triggers -->
+	<!-- Will automatically start scheduling on context startup -->
+	<bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref local="checkCronTest"/>
+			</list>
+		</property>
 	</bean>
 </beans>

@@ -16,8 +16,13 @@
 			<spring:message code="welcome_text" />
 		</p>
 		<p>
+			<a href="tuborsyn">Tumorboard patient sinchronisation </a>
+		</p>
+		<!-- 
+		<p>
 			<a href="pasy"> patient sinchronisation </a>
 		</p>
+		 -->
 		<p>
 			<a href="tumorboard"> tumorboard </a>
 		</p>

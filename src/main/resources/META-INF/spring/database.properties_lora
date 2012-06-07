@@ -6,5 +6,6 @@ database.username=ows_edit
 database.url=jdbc:postgresql://localhost/clincon2
 database1.url=jdbc:postgresql://localhost/sg20120511
 database2.url=jdbc:postgresql://localhost/johannisplatz20120514
-database.urldb1=http://localhost:8080/jp20120514/patient=
-database.contextdb1=jp20120514
+database3.url=jdbc:postgresql://localhost/johannisplatz20120514
+database.urldb2=http://localhost:8080/jp20120514/patient=
+database.contextdb2=jp20120514

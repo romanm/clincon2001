@@ -11,16 +11,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 public class CronTest {
 	private final Log logger = LogFactory.getLog(getClass());
-	@Autowired private PatientenSynchronization patientenSynchronization;
-	@Autowired @Qualifier("appUtils")		private		AppUtils		appUtils;
+	@Autowired							private		PatientenSynchronization	patientenSynchronization;
+	@Autowired @Qualifier("appUtils")	private		AppUtils					appUtils;
 	private String test;
 
 	public String checkTest() {
 		String string = "This it - "+getTest()+" :: "+Calendar.getInstance().getTime();
 		logger.info(string);
-		patientenSynchronization.updatePatientenJohannisplatz(appUtils);
-//		int lastCopydPatiantId = patientenSynchronization.lastCopydPatiantId("praxisluisa");
-//		logger.info("lastCopydPatiantId="+lastCopydPatiantId);
+//		patientenSynchronization.updatePatientenJohannisplatz(appUtils);
+//		patientenSynchronization.lastCopydPatiantId("praxisluisa");
+//		patientenSynchronization.lastCopydPatiantId("tmp");
+//		patientenSynchronization.lastCopydPatiantId("ows1tubo");
+		patientenSynchronization.updatePatientenOws1tubo(appUtils);
 		return string;
 	}
 	public String getTest() {

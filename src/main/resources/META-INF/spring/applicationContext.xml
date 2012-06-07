@@ -60,8 +60,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springf
     </context:component-scan>
 
 	<bean id="appUtils" class="org.clincon2001.synchronization.AppUtils">
-		<property name="urldb1"		value="${database.urldb1}" />
-		<property name="contextdb1"	value="${database.contextdb1}" />
+		<property name="urldb2"		value="${database.urldb2}" />
+		<property name="contextdb2"	value="${database.contextdb2}" />
+		<property name="urldb3"		value="${database.urldb3}" />
 	</bean>
 
     <bean class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close" id="dataSource">
@@ -95,6 +96,9 @@ xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springf
 	<bean id="simpleJdbc2" class="org.springframework.jdbc.core.JdbcTemplate">
 		<constructor-arg ref="dataSource2import"/>
 	</bean>
+	<bean id="simpleJdbc3" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="dataSource3import"/>
+	</bean>
 	<bean id="dataSource1import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${database.driverClassName}"/>
 		<property name="url" value="${database1.url}" />
@@ -104,6 +108,12 @@ xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springf
 	<bean id="dataSource2import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${database.driverClassName}"/>
 		<property name="url" value="${database2.url}" />
+		<property name="username" value="${database.username}" />
+		<property name="password" value="${database.password}" />
+	</bean>
+	<bean id="dataSource3import" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="${database.driverClassName}"/>
+		<property name="url" value="${database3.url}" />
 		<property name="username" value="${database.username}" />
 		<property name="password" value="${database.password}" />
 	</bean>
